@@ -33,7 +33,7 @@ psem_t *sem;
  *  Helper function used by trace.
  */
 
-char flip(char x) {
+char next(char x) {
     switch (x) {
         case 'A': 
             return 'B';
@@ -50,20 +50,20 @@ char flip(char x) {
  */
 
 void trace(char id) {
-    static char next = '?';
+    static char nxt = '?';
     static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
     
     pthread_mutex_lock(&mutex);
 
-    if (next == '?') {
+    if (nxt == '?') {
         printf("%c\n", id);
-        next = flip(id);
+        nxt = next(id);
     } else {
-        if (id == next) {
-            next = '?';
+        if (id == nxt) {
+            nxt = '?';
             printf("%c\n\n", id);
         } else {
-            printf("%c <===== ERROR: should have been %c\n\n", id, next);
+            printf("%c <===== ERROR: should have been %c\n\n", id, nxt);
             exit(EXIT_FAILURE);
         }
     }
