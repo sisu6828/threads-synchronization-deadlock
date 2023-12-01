@@ -3,8 +3,13 @@
  *  
  * Two threads executing chunks of work in lock step.
  *
- * Author: Nikos Nikoleris <nikos.nikoleris@it.uu.se>
- *
+ * Author(s): Nikos Nikoleris <nikos.nikoleris@it.uu.se>
+ *             
+ *            Original version. 
+ * 
+ *            Karl Marklund <karl.markund@it.uu.se> 
+ * 
+ *            Added the trace() function and automatic error detection.
  */
 
 #include <stdio.h>     /* printf() */
@@ -14,14 +19,52 @@
 
 #include "psem.h"
 
-#define LOOPS 10
-#define NTHREADS 3
-#define MAX_SLEEP_TIME 3
+#define LOOPS           10
+#define NTHREADS        3
+#define MAX_SLEEP_TIME  3 // Seconds
 
-// Declare global semaphore variables. Note, they must be initialized before use.
+/* Declare global semaphore variables. Note, they must be initialized before use. */
+
 psem_t *sem;
 
+
+char flip(char x) {
+    switch (x) {
+        case 'A': 
+            return 'B';
+        case 'B':
+            return 'A';
+        default: 
+             return '?';
+    }
+}
+
+void trace(char id) {
+    static char next = '?';
+    static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+    
+
+    pthread_mutex_lock(&mutex);
+
+    if (next == '?') {
+        printf("%c\n", id);
+        next = flip(id);
+    } else {
+        if (id == next) {
+            next = '?';
+            printf("%c\n\n", id);
+        } else {
+            printf("%c <===== ERROR: should have been %c\n\n", id, next);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    pthread_mutex_unlock(&mutex);
+}
+
+
 /* TODO: Make the two threads perform their iterations in lockstep. */
+
 
 void *
 threadA(void *param __attribute__((unused)))
@@ -29,7 +72,7 @@ threadA(void *param __attribute__((unused)))
     int i;
 
     for (i = 0; i < LOOPS; i++) {
-        printf("A\n");
+        trace('A');
         sleep(rand() % MAX_SLEEP_TIME);
     }
 
@@ -45,7 +88,7 @@ threadB(void *param  __attribute__((unused)))
     int i;
 
     for (i = 0; i < LOOPS; i++) {
-        printf("B\n");
+        trace('B');
         sleep(rand() % MAX_SLEEP_TIME);
     }
 
