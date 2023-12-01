@@ -19,7 +19,7 @@ ifeq ($(OS), Linux)
 	LDLIBS += -pthread -lrt
 endif
 
-all: $(addprefix bin/, mutex psem_test rendezvous bounded_buffer_test bounded_buffer_stress_test)
+all: $(addprefix bin/, mutex psem_test barrier bounded_buffer_test bounded_buffer_stress_test)
 
 bin/mutex: obj/mutex.o obj/timing.o
 	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
@@ -27,7 +27,7 @@ bin/mutex: obj/mutex.o obj/timing.o
 bin/psem_test: psem/psem.o obj/psem_test.o
 	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
-bin/rendezvous: psem/psem.o obj/rendezvous.o
+bin/barrier: psem/psem.o obj/barrier.o
 	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 bin/bounded_buffer_test: psem/psem.o obj/bounded_buffer.o obj/bounded_buffer_test.o
