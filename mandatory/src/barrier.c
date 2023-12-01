@@ -1,6 +1,6 @@
 /**
- * Rendezvous
- *
+ * Barrier
+ *  
  * Two threads executing chunks of work in lock step.
  *
  * Author: Nikos Nikoleris <nikos.nikoleris@it.uu.se>
@@ -29,7 +29,7 @@ threadA(void *param __attribute__((unused)))
     int i;
 
     for (i = 0; i < LOOPS; i++) {
-        printf("A%d\n", i);
+        printf("A\n");
         sleep(rand() % MAX_SLEEP_TIME);
     }
 
@@ -45,7 +45,7 @@ threadB(void *param  __attribute__((unused)))
     int i;
 
     for (i = 0; i < LOOPS; i++) {
-        printf("B%d\n", i);
+        printf("B\n");
         sleep(rand() % MAX_SLEEP_TIME);
     }
 
