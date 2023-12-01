@@ -19,14 +19,19 @@
 
 #include "psem.h"
 
-#define LOOPS           10
-#define NTHREADS        3
-#define MAX_SLEEP_TIME  3 // Seconds
+#define LOOPS           10  // Number of iterations.
+#define MAX_SLEEP_TIME  3   // Thread sleep time in seconds.
 
-/* Declare global semaphore variables. Note, they must be initialized before use. */
+/**
+ *  Declare global semaphore variables. Note, they must be initialized before
+ *  use. 
+ */
 
 psem_t *sem;
 
+/**
+ *  Helper function used by trace.
+ */
 
 char flip(char x) {
     switch (x) {
@@ -39,11 +44,15 @@ char flip(char x) {
     }
 }
 
+/**
+ * Function used to trace the execution of the threads and detect
+ * invalid barrier synchronization.
+ */
+
 void trace(char id) {
     static char next = '?';
     static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
     
-
     pthread_mutex_lock(&mutex);
 
     if (next == '?') {
@@ -62,9 +71,10 @@ void trace(char id) {
     pthread_mutex_unlock(&mutex);
 }
 
-
-/* TODO: Make the two threads perform their iterations in lockstep. */
-
+/**
+ *  TODO: Enforce barrier synchronization between the two thread A and B, i.e., 
+ *        make the threads perform their iterations in lockstep. 
+ */
 
 void *
 threadA(void *param __attribute__((unused)))
@@ -79,8 +89,10 @@ threadA(void *param __attribute__((unused)))
     pthread_exit(0);
 }
 
-
-/* TODO: Make the two threads perform their iterations in lockstep. */
+/**
+ *  TODO: Enforce barrier synchronization between the two thread A and B, i.e., 
+ *        make the threads perform their iterations in lockstep. 
+ */
 
 void *
 threadB(void *param  __attribute__((unused)))
@@ -100,7 +112,9 @@ main()
 {
     pthread_t tidA, tidB;
 
-    // Todo: Initialize semaphores.
+    /**
+     * Todo: Initialize semaphores.
+     */
 
     sem = psem_init(666);
     
@@ -118,7 +132,10 @@ main()
         abort();
     }
 
-    // Todo: Destroy semaphores.
+    /**
+     * Todo: Destroy semaphores.
+     */
+
     psem_destroy(sem);
 
     return 0;
