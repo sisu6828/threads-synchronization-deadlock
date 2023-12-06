@@ -8,12 +8,13 @@
   On error all functions in the API prints an error message an terminates the
   program.
 
-  History
-
   2018-03-01
 
   First version by Karl Marklund <karl.marklund@it.uu.se>.
 */
+
+#ifndef PSEM_H
+#define PSEM_H
 
 /* Platform dependent definition of the psem_t data type. */
 #include "platform_specifics.h"
@@ -58,3 +59,5 @@ void psem_signal(psem_t *sem);
    initialized by psem_init() should be destroyed using psem_destroy().
  */
 void psem_destroy(psem_t *sem);
+
+#endif

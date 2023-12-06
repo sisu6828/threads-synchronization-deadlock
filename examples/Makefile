@@ -15,8 +15,9 @@ ifeq ($(OS), Linux)
 	XLDLIBS := -lrt
 endif
 
+CFLAGS += -I ../psem
 
-PTHREADS := balance mutex_lock_attributes hello_pthreads pthreads_and_fork pthreads_create_exit_null_join pthreads_unsynchronized_concurrency 
+PTHREADS := balance hello_pthreads pthreads_and_fork pthreads_create_exit_null_join pthreads_unsynchronized_concurrency 
 NORMAL	 := callbacks timer
 UCONTEXT := contexts
 
