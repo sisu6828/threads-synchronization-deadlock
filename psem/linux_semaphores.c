@@ -1,16 +1,16 @@
-#include <stdio.h> // perror()
-#include <stdlib.h> // malloc()
+#include <stdio.h>   // perror()
+#include <stdlib.h>  // malloc()
 
 #include "psem.h"
 
 psem_t *psem_init(unsigned int value) {
   psem_t *sem = malloc(sizeof(sem_t));
 
- if (sem_init(sem, 0, value) == -1) {
-   perror("Initializing new semaphore");
-   abort();
- }
- return sem;
+  if (sem_init(sem, 0, value) == -1) {
+    perror("Initializing new semaphore");
+    abort();
+  }
+  return sem;
 }
 
 void psem_wait(psem_t *sem) {
@@ -32,4 +32,5 @@ void psem_destroy(psem_t *sem) {
     perror("Destroying semaphore failed");
     abort();
   }
+  free(sem);
 }
