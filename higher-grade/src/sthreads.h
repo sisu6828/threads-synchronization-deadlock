@@ -13,16 +13,16 @@
 #include <ucontext.h>
 
 /* A thread can be in one of the following states. */
-typedef enum {running, ready, waiting, terminated} state_t;
+typedef enum { running, ready, waiting, terminated } state_t;
 
 /* Thread ID. */
 typedef int tid_t;
 
 typedef struct thread thread_t;
 
-/* Data to manage a single thread should be kept in this structure. Here are a few
-   suggestions of data you may want in this structure but you may change this to
-   your own liking.
+/* Data to manage a single thread should be kept in this structure. Here are a
+   few suggestions of data you may want in this structure but you may change
+   this to your own liking.
 */
 struct thread {
   tid_t tid;
@@ -31,14 +31,12 @@ struct thread {
   thread_t *next; /* can use this to create a linked list of threads */
 };
 
-
 /*******************************************************************************
                                Simple Threads API
 
 You may add or change arguments to the functions in the API. You may also add
 new functions to the API.
 ********************************************************************************/
-
 
 /* Initialization
 
@@ -65,7 +63,7 @@ tid_t spawn(void (*start)());
    trigger the thread scheduler to dispatch one of the threads in the ready
    state and change the state of the calling thread from running to ready.
 */
-void  yield();
+void yield();
 
 /* Thread termination
 
@@ -74,18 +72,19 @@ void  yield();
    waiting to ready. Next, the thread scheduler will dispatch one of the ready
    threads.
 */
-void  done();
+void done();
 
 /* Join with a terminated thread
 
    The join() function waits for the specified thread to terminate.
-   If the specified thread has already terminated, join() should return immediately.
+   If the specified thread has already terminated, join() should return
+   immediately.
 
-   A thread calling join(thread) will be suspended and change state from running to
-   waiting and trigger the thread scheduler to dispatch one of the ready
-   threads. The suspended thread will change state from waiting to ready once the thread with
-   thread id thread calls done and join() should then return the thread id of the
-   terminated thread.
+   A thread calling join(thread) will be suspended and change state from running
+   to waiting and trigger the thread scheduler to dispatch one of the ready
+   threads. The suspended thread will change state from waiting to ready once
+   the thread with thread id thread calls done and join() should then return the
+   thread id of the terminated thread.
 */
 tid_t join(tid_t thread);
 
