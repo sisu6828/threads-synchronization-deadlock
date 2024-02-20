@@ -18,7 +18,7 @@ endif
 CFLAGS += -I ../psem
 
 PTHREADS := balance hello_pthreads pthreads_and_fork pthreads_create_exit_null_join pthreads_unsynchronized_concurrency 
-NORMAL	 := callbacks timer
+NORMAL	 := callbacks timer psem_test
 UCONTEXT := contexts
 
 PTHREAD_TARGETS  := $(addprefix bin/, $(PTHREADS))
@@ -43,6 +43,15 @@ $(NO_OPT_TARGETS): CFLAGS := $(filter-out -O2, $(CFLAGS))
 
 all: $(NORMAL_TARGETS) $(PTHREAD_TARGETS) $(UCONTEXT_TARGETS)
 
+../psem/psem.o:
+	cd ../psem; make
+
+bin/psem_test: ../psem/psem.o obj/psem_test.o
+	$(CC) $(LDFLAGS) -I ../psem $(LDLIBS) $^ -o $@
+
+obj/%.o: src/%.c
+	$(CC) -c $(CFLAGS) $^ -o $@
+	
 bin/%: src/%.c
 	$(CC) $(CFLAGS) $(LDLIBS) $< -o $@
 
