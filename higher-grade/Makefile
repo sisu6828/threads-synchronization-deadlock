@@ -15,11 +15,14 @@ endif
 
 .PHONY: all clean
 
-all: bin/n_barrier_test bin/sthreads_test	
+all: bin/n_barrier_test bin/sthreads_test bin/bank_test
 
 ../psem/psem.o:
 	cd ../psem; make 
 
+bin/bank_test:  obj/bank_test.o obj/bank.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS)  $^ -o $@
+	
 bin/n_barrier_test: ../psem/psem.o obj/n_barrier.o obj/n_barrier_test.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS)  $^ -o $@
 
