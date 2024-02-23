@@ -12,7 +12,7 @@
  *
  */
 
-#include "bank.h"  // The bank API
+#include "bank.h"  // The bank API.
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -34,13 +34,6 @@ int sum() {
   return sum;
 }
 
-void print_account(account_t *account) {
-  int from_id = -1;  // You must change this.
-  int to_id = -1;    // You must change this.
-
-  printf("%d   %d\n", from_id, to_id);
-}
-
 void print_accounts() {
   printf("\nAccount Amount\n");
   printf("------------------\n");
@@ -52,9 +45,7 @@ void print_accounts() {
     account = accounts[id];
     balance = account->balance;
 
-    int account_id = -1;  // You must change this.
-
-    printf("%d\t%d\n", account_id, balance);
+    printf("%d\t%d\n", id, balance);
   }
 
   printf("------------------\n");
@@ -73,7 +64,11 @@ void *thread(void *arg) {
 
   amount = 50 * (1 + rand() % 5);
 
-  transfer(amount, accounts[from], accounts[to]);
+  if (transfer(amount, accounts[from], accounts[to]) == 0) {
+    printf("%d ---- %03d ---> %d   Ok\n", from, amount, to);
+  } else {
+    printf("%d ---- %03d ---> %d   Insufficient funds\n", from, amount, to);
+  };
 
   return NULL;
 }
@@ -93,28 +88,22 @@ void sanity_check(int init_sum) {
   // Due to data races a balance may become negative.
 
   if (negative_balance()) {
-    printf("ERROR: Negative balance due to DATA RACE!\n\n");
-    exit(EXIT_FAILURE);
+    printf("RACE CONDITION: Negative balance detected!\n\n");
+    error = true;
   }
-
-  // NOTE: Due to data races extra money may also be added to an account. This
-  // is not as easy to detect as a negative balance and we do not check this in
-  // any way.
-
-  // NOTE: Data races may cancel each other out. Hence the system invariant, the
-  // conversation of the total amount of money, may not be broken, even if there
-  // is an undetected data race.
 
   int end_sum = sum();
 
-  if (end_sum == init_sum) {
-    printf("SUCCESS: System invariant not broken!\n\n");
-  } else {
-    error = true;
-    printf("ERROR: System invariant broken!\n\n");
-  }
   printf("Total amount of money was initially %d and is now %d.\n", init_sum,
          end_sum);
+  if (end_sum == init_sum) {
+    printf("\nSystem invariant (conservation of money) not broken.\n");
+  } else {
+    error = true;
+    printf(
+        "\nRACE CONDITION: System invariant (conservation of "
+        "money) broken!\n\n");
+  }
 
   if (error) exit(EXIT_FAILURE);
 }
@@ -144,6 +133,8 @@ int main(void) {
 
   for (int i = 1; i <= ROUNDS; i++) {
     printf("\nRound %d of %d\n\n", i, ROUNDS);
+
+    printf("From  Amount    To  Result\n\n");
 
     for (int i = 0; i < N_THREADS; i++) {
       pthread_create(&threads[i], NULL, thread, NULL);

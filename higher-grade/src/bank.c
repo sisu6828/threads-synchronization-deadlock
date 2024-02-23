@@ -30,24 +30,44 @@ account_t *account_new(unsigned int balance) {
 
 void account_destroy(account_t *account) {}
 
-void transfer(int amount, account_t *from, account_t *to) {
-  /**
-   * NOTE: Leave the random RANDOM_SLEEPs. These are used to enforce a more
-   * randomized interleaving of the threads.
-   */
+/**
+ * A purposefully stupid way to add two numbers that makes data
+ * races more likely.
+ *
+ * Do NOT add synchronization here.
+ */
+int add(int a, int b) {
+  int result = a + b;
+  RANDOM_SLEEP();
+  return result;
+}
 
-  int from_id = -1;  // You must change this.
-  int to_id = -1;    // You must change this.
+/**
+ * A purposefully stupid way to subtract two numbers that makes data
+ * races more likely.
+ *
+ * Do NOT add synchronization here.
+ */
+int sub(int a, int b) {
+  int result = a - b;
+  RANDOM_SLEEP();
+  return result;
+}
 
+int transfer(int amount, account_t *from, account_t *to) {
   if (from->balance >= amount) {
-    RANDOM_SLEEP();
-    from->balance -= amount;
-    RANDOM_SLEEP();
-    to->balance += amount;
+    from->balance = sub(from->balance, amount);
+
+    /**
+     * Don't remove this RANDOM_SLEEP. This is used to enforce a more
+     * randomized interleaving of the threads.
+     */
     RANDOM_SLEEP();
 
-    printf("%d --- %03d ---> %d\n", from_id, amount, to_id);
+    to->balance = add(to->balance, amount);
+
+    return 0;
   } else {
-    printf("%d --- %03d ---> %d Insufficient funds\n", from_id, amount, to_id);
+    return -1;
   }
 }

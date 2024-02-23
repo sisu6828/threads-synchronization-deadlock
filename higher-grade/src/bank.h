@@ -60,7 +60,10 @@ void account_destroy(account_t* account);
  * to:
  *   The account to transfer the money to.
  *
+ * return value:
+ *   Return -1 if not sufficient funds in the from account. Otherwise returns 0.
+ *
  */
-void transfer(int amount, account_t* from, account_t* to);
+int transfer(int amount, account_t* from, account_t* to);
 
 #endif
