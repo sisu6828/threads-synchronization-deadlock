@@ -15,7 +15,7 @@
 #include <pthread.h>  // pthread_...()
 
 /**
- *  A bank account represented by the following C structure.
+ *  A bank account is represented by the following C structure.
  *
  *  NOTE: You may need to add members to this structure.
  */
