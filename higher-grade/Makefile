@@ -8,6 +8,11 @@ ifeq ($(DEBUG), y	)
 	CFLAGS += -DDEBUG -g
 endif
 
+ifeq ($(OS), Linux)
+    CFLAGS += -pthread
+    LDLIBS += -pthread -lrt
+endif
+
 .PHONY: all clean
 
 all: bin/n_barrier_test bin/sthreads_test	
