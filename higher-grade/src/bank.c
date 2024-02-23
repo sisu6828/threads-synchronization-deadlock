@@ -55,7 +55,7 @@ int sub(int a, int b) {
 }
 
 int transfer(int amount, account_t *from, account_t *to) {
-  if (from->balance >= amount) {
+    if (from->balance >= amount) {
     from->balance = sub(from->balance, amount);
 
     /**
