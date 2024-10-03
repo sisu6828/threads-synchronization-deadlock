@@ -26,9 +26,6 @@ bin/bank_test:  obj/bank_test.o obj/bank.o src/bank.h
 bin/n_barrier_test: ../psem/psem.o obj/n_barrier.o obj/n_barrier_test.o src/n_barrier.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(filter %.o, $^) -o $@
 
-bin/kaplan: obj/kaplan.o
-	$(CC) $(CFLAGS) $(LDLIBS) $(filter-out src/sthreads.h, $^) -o $@
-
 bin/sthreads_test: obj/sthreads_test.o obj/sthreads.o src/sthreads.h 
 	$(CC) $(CFLAGS) $(LDLIBS) $(filter-out src/sthreads.h, $^) -o $@
 
