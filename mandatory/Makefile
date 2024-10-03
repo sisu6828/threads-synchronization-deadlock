@@ -26,7 +26,6 @@ CFLAGS += -I ../psem
 
 all: $(addprefix bin/, \
 	mutex \
-	psem_test \
 	two_thread_barrier \
 	bounded_buffer_test \
 	bounded_buffer_stress_test \
@@ -36,9 +35,6 @@ all: $(addprefix bin/, \
 	cd ../psem; make
 
 bin/mutex: obj/mutex.o obj/timing.o
-	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
-
-bin/psem_test: ../psem/psem.o obj/psem_test.o
 	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 bin/two_thread_barrier: ../psem/psem.o obj/two_thread_barrier.o
