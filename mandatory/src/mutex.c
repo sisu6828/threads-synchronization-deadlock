@@ -179,14 +179,7 @@ inc_atomic(void *arg __attribute__((unused)))
 
     for (i = 0; i < INC_ITERATIONS; i++) {
         
-        if (__sync_fetch_and_add(&counter, 1) == 0)
-        {
-            counter += INCREMENT; // You need to replace this.    // critical section
-            __sync_fetch_and_sub(&counter, 1);
-        }else
-        {
-        }
-        
+        __sync_fetch_and_add(&counter, INCREMENT);
     }
 
     return NULL;
@@ -201,13 +194,7 @@ dec_atomic(void *arg __attribute__((unused)))
     for (i = 0; i < DEC_ITERATIONS; i++) {
         /* TODO: Use atomic subtraction to increment the shared counter */
 
-        if (__sync_fetch_and_add(&counter, 1) == 0)
-        {
-            counter -= DECREMENT; // You need to replace this.    // critical section
-            __sync_fetch_and_sub(&counter, 1);
-        }else
-        {
-        }
+            __sync_fetch_and_sub(&counter, DECREMENT);
     }
 
     return NULL;
