@@ -118,7 +118,10 @@ dec_mutex(void *arg __attribute__((unused)))
 void spin_lock() {
     while (__sync_lock_test_and_set(&lock, true))
     {
-        while (lock);
+        while (lock)
+        {
+            // Do nothing
+        };
     }
     
 }
