@@ -80,13 +80,9 @@ inc_mutex(void *arg __attribute__((unused)))
     int i;
 
     for (i = 0; i < INC_ITERATIONS; i++) {
-        int res = pthread_mutex_trylock(&counter);
-
-        if (res == 0)
-        {
+            pthread_mutex_lock(&lock);
             counter += INCREMENT; // critical section
-            pthread_mutex_unlock(&counter);
-        }
+            pthread_mutex_unlock(&lock);
     }
 
     return NULL;
@@ -101,13 +97,11 @@ dec_mutex(void *arg __attribute__((unused)))
     for (i = 0; i < DEC_ITERATIONS; i++) {
         /* TODO: Protect access to the shared variable counter with a mutex lock
          * inside the loop. */
-        int res = pthread_mutex_trylock(&counter);
 
-        if (res == 0)
-        {
+
+            pthread_mutex_lock(&lock);
             counter -= DECREMENT; // critical section
-            pthread_mutex_unlock(&counter);
-        }
+            pthread_mutex_unlock(&lock);
 
 
         
@@ -130,7 +124,7 @@ void spin_lock() {
 }
 
 void spin_unlock() {
-    int res = __sync_lock_test_and_set(&lock, false);
+    __sync_lock_test_and_set(&lock, false);
 }
 
 /* Increments of the shared counter should be protected by a test-and-set spinlock */
