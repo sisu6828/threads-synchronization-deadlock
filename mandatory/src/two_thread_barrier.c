@@ -29,7 +29,8 @@
  *  Declare global semaphore variables. Note, they must be initialized, for 
  *  example in main() before use. 
  */
-psem_t *sem; 
+psem_t *sem_a; 
+psem_t *sem_b;
 
 /**
  * next()
@@ -99,6 +100,8 @@ void *threadA(void *param __attribute__((unused))) {
     for (i = 0; i < ITERATIONS; i++) {
         trace('A');
         sleep(rand() % MAX_SLEEP_TIME);
+        psem_signal(sem_a);
+        psem_wait(sem_b);
     }
 
     pthread_exit(0);
@@ -121,6 +124,8 @@ void *threadB(void *param  __attribute__((unused))) {
     for (i = 0; i < ITERATIONS; i++) {
         trace('B');
         sleep(rand() % MAX_SLEEP_TIME);
+        psem_signal(sem_b);
+        psem_wait(sem_a);
     }
 
     pthread_exit(0);
@@ -140,11 +145,9 @@ void *threadB(void *param  __attribute__((unused))) {
 int main() {
     pthread_t tidA, tidB;
 
-    /**
-     * Todo: Initialize semaphores.
-     */
 
-    sem = psem_init(666);
+    sem_a = psem_init(0);
+    sem_b = psem_init(0);
     
     srand(time(NULL));
     pthread_setconcurrency(3);
@@ -162,11 +165,9 @@ int main() {
         abort();
     }
 
-    /**
-     * Todo: Destroy semaphores.
-     */
 
-    psem_destroy(sem);
+    psem_destroy(sem_a);
+    psem_destroy(sem_b);
 
     return 0;
 }
