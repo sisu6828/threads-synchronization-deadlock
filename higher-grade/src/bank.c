@@ -74,18 +74,30 @@ int sub(int a, int b) {
 }
 
 int transfer(int amount, account_t *from, account_t *to) {
-    int res_a = pthread_mutex_trylock(&to->lock);
-    int res_b = pthread_mutex_trylock(&from->lock);
+  
+  int res_a = pthread_mutex_trylock(&to->lock);
+  int res_b = pthread_mutex_trylock(&from->lock);
+  // do
+  // {
+  //   if (res_a != 0 || res_b != 0) {
+  //     pthread_mutex_unlock(&to->lock);
+  //     pthread_mutex_unlock(&from->lock);
+  //     perror("failed to lock mutex, waiting for lock");
+  //     // usleep(1000);
+  //   }
+    
+  // } while (&to->lock != 0 || &from->lock != 0);
+  
+  
 
     if (res_a != 0 || res_b != 0) {
           pthread_mutex_unlock(&to->lock);
           pthread_mutex_unlock(&from->lock);
+          perror("failed to lock mutex, waiting for lock");
         return -1;
     }
 
     if (from->balance >= amount) {
-
-      
       
     from->balance = sub(from->balance, amount);
 
