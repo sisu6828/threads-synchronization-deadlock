@@ -80,9 +80,9 @@ inc_mutex(void *arg __attribute__((unused)))
     int i;
 
     for (i = 0; i < INC_ITERATIONS; i++) {
-            pthread_mutex_lock(&lock);
+            pthread_mutex_lock(&mutex);
             counter += INCREMENT; // critical section
-            pthread_mutex_unlock(&lock);
+            pthread_mutex_unlock(&mutex);
     }
 
     return NULL;
@@ -99,9 +99,9 @@ dec_mutex(void *arg __attribute__((unused)))
          * inside the loop. */
 
 
-            pthread_mutex_lock(&lock);
+            pthread_mutex_lock(&mutex);
             counter -= DECREMENT; // critical section
-            pthread_mutex_unlock(&lock);
+            pthread_mutex_unlock(&mutex);
 
 
         
