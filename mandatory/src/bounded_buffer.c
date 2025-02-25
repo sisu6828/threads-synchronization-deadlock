@@ -1,33 +1,42 @@
 #include "bounded_buffer.h"
 
-#include <string.h>         // strncmp()
-#include <stdbool.h>        // true, false
-#include <assert.h>         // assert()
-#include <ctype.h>          // isprint()
-#include <stddef.h>         // NULL
-#include <stdio.h>          // printf(), fprintf()
-#include <stdlib.h>         // [s]rand()
-#include <unistd.h>         // usleep(), sleep()
-#include <pthread.h>        // pthread_...
+#include <string.h>  // strncmp()
+#include <stdbool.h> // true, false
+#include <assert.h>  // assert()
+#include <ctype.h>   // isprint()
+#include <stddef.h>  // NULL
+#include <stdio.h>   // printf(), fprintf()
+#include <stdlib.h>  // [s]rand()
+#include <unistd.h>  // usleep(), sleep()
+#include <pthread.h> // pthread_...
 
-void buffer_init(buffer_t *buffer, int size) {
+void buffer_init(buffer_t *buffer, int size)
+{
 
   // Allocate the buffer array.
-  tuple_t *array = malloc(size*sizeof(tuple_t));
+  tuple_t *array = malloc(size * sizeof(tuple_t));
 
-  if (array == NULL) {
+  if (array == NULL)
+  {
     perror("Could not allocate buffer array");
     exit(EXIT_FAILURE);
- }
+  }
 
   // Initialize the binary mutex semaphore.
   buffer->mutex = psem_init(1);
+  buffer->in = 0;
+  buffer->out = 0;
+  buffer->array = array;
+  
 
   // TODO: initialize the rest of the buffer struct members.
-
+  buffer->data = psem_init(0);
+  buffer->empty = psem_init(true);
+  buffer->size = size;
 }
 
-void buffer_destroy(buffer_t *buffer) {
+void buffer_destroy(buffer_t *buffer)
+{
 
   // Dealloacte the array.
   free(buffer->array);
@@ -36,38 +45,45 @@ void buffer_destroy(buffer_t *buffer) {
   // Deallocate the mutex semaphore.
   psem_destroy(buffer->mutex);
   buffer->mutex = NULL;
+  psem_destroy(buffer->data);
+  buffer->data = NULL;
+  psem_destroy(buffer->empty);
+  buffer->empty = NULL;
 
   // TODO: Deallocate any other resources allocated to the bounded buffer.
-
 }
 
-void buffer_print(buffer_t *buffer) {
+void buffer_print(buffer_t *buffer)
+{
   puts("");
   puts("---- Bounded Buffer ----");
   puts("");
 
-  printf("size: %d\n", buffer -> size);
-  printf("  in: %d\n", buffer -> in);
-  printf(" out: %d\n", buffer -> out);
+  printf("size: %d\n", buffer->size);
+  printf("  in: %d\n", buffer->in);
+  printf(" out: %d\n", buffer->out);
   puts("");
 
   int i = 0;
 
   // TODO: print all elements of the array.
-
-  // Print element i of the array. 
+while (i < buffer->size)
+{
+  
   printf("array[%d]: (%d, %d)\n", i, buffer->array[i].a, buffer->array[i].b);
+  i++;
+}
 
   puts("");
   puts("------------------------");
   puts("");
 }
 
-
-void buffer_put(buffer_t *buffer, int a, int b) {
+void buffer_put(buffer_t *buffer, int a, int b)
+{
   // TODO: Add the needed synchronization.
 
-  // Insert the tuple (a, b) into the buffer. 
+  // Insert the tuple (a, b) into the buffer.
   buffer->array[buffer->in].a = a;
   buffer->array[buffer->in].b = b;
 
@@ -76,7 +92,8 @@ void buffer_put(buffer_t *buffer, int a, int b) {
   // TODO: Add the needed synchronization.
 }
 
-void buffer_get(buffer_t *buffer, tuple_t *tuple) {
+void buffer_get(buffer_t *buffer, tuple_t *tuple)
+{
   // TODO: Add the needed synchronization.
 
   // Read the tuple (a, b) from the buffer.
