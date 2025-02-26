@@ -31,7 +31,7 @@ void buffer_init(buffer_t *buffer, int size)
 
   // TODO: initialize the rest of the buffer struct members.
   buffer->data = psem_init(0);
-  buffer->empty = psem_init(true);
+  buffer->empty = psem_init(size);
   buffer->size = size;
 }
 
@@ -82,18 +82,25 @@ while (i < buffer->size)
 void buffer_put(buffer_t *buffer, int a, int b)
 {
   // TODO: Add the needed synchronization.
+  psem_wait(buffer->empty);
+  psem_wait(buffer->mutex);
 
   // Insert the tuple (a, b) into the buffer.
   buffer->array[buffer->in].a = a;
   buffer->array[buffer->in].b = b;
 
   // TODO: Update buffer->in and make sure it wraps around.
+  buffer->in = (buffer->in + 1) % buffer->size;
 
   // TODO: Add the needed synchronization.
+  psem_signal(buffer->data);
+  psem_signal(buffer->mutex);
 }
 
 void buffer_get(buffer_t *buffer, tuple_t *tuple)
 {
+  psem_wait(buffer->data);
+  psem_wait(buffer->mutex);
   // TODO: Add the needed synchronization.
 
   // Read the tuple (a, b) from the buffer.
@@ -101,6 +108,10 @@ void buffer_get(buffer_t *buffer, tuple_t *tuple)
   tuple->b = buffer->array[buffer->out].b;
 
   // TODO: Update buffer->out and make sure it wraps around.
+  buffer->out = (buffer->out + 1) % buffer->size;
 
   // TODO: Add the needed synchronization.
+
+  psem_signal(buffer->empty);
+  psem_signal(buffer->mutex);
 }
