@@ -75,7 +75,8 @@ int sub(int a, int b) {
 
 int transfer(int amount, account_t *from, account_t *to) {
   
-  pthread_mutex_lock(&from->lock); // We start by locking the account from which we want to transfer money.
+  pthread_mutex_lock(&from->lock); // We start by locking the account from which we want to transfer money 
+                                   // so the value doesn't change between us checking the balance and subtracting the amount.
   
   if (from->balance >= amount) {
     
@@ -90,7 +91,7 @@ int transfer(int amount, account_t *from, account_t *to) {
      */
     RANDOM_SLEEP();
     
-    pthread_mutex_lock(&to->lock);
+    pthread_mutex_lock(&to->lock); // We only lock the account when we are going to modify the value.
     to->balance = add(to->balance, amount);
     pthread_mutex_unlock(&to->lock);
 
