@@ -75,46 +75,28 @@ int sub(int a, int b) {
 
 int transfer(int amount, account_t *from, account_t *to) {
   
-  int res_a = pthread_mutex_trylock(&to->lock);
-  int res_b = pthread_mutex_trylock(&from->lock);
-  // do
-  // {
-  //   if (res_a != 0 || res_b != 0) {
-  //     pthread_mutex_unlock(&to->lock);
-  //     pthread_mutex_unlock(&from->lock);
-  //     perror("failed to lock mutex, waiting for lock");
-  //     // usleep(1000);
-  //   }
+  pthread_mutex_lock(&from->lock); // We start by locking the account from which we want to transfer money.
+  
+  if (from->balance >= amount) {
     
-  // } while (&to->lock != 0 || &from->lock != 0);
-  
-  
-
-    if (res_a != 0 || res_b != 0) {
-          pthread_mutex_unlock(&to->lock);
-          pthread_mutex_unlock(&from->lock);
-          perror("failed to lock mutex, waiting for lock");
-        return -1;
-    }
-
-    if (from->balance >= amount) {
-      
-    from->balance = sub(from->balance, amount);
-
+    from->balance = sub(from->balance, amount); // We subtract the amount from the balance of the account from which we want to transfer money.
+    pthread_mutex_unlock(&from->lock);          // We unlock the account right after we have subtracted the amount from the balance.
+                                                // This is to break the hold and wait requirement.
+                                                // One of the four requirements for deadlock to occur.
+    
     /**
      * Don't remove this RANDOM_SLEEP. This is used to enforce a more
      * randomized interleaving of the threads.
      */
     RANDOM_SLEEP();
-
+    
+    pthread_mutex_lock(&to->lock);
     to->balance = add(to->balance, amount);
-
     pthread_mutex_unlock(&to->lock);
-    pthread_mutex_unlock(&from->lock);
+
     return 0;
   } else {
-    // pthread_mutex_unlock(&to->lock);
-    // pthread_mutex_unlock(&from->lock);
+    pthread_mutex_unlock(&from->lock);
     return -1;
   }
 }
