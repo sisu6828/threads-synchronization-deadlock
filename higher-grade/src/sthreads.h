@@ -31,6 +31,8 @@ struct thread {
   thread_t *next; /* can use this to create a linked list of threads */
 };
 
+
+
 /*******************************************************************************
                                Simple Threads API
 
